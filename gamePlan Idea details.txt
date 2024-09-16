@@ -1,0 +1,59 @@
+# Game Character Ideas
+
+basic structure or unit available for a game character
+
+- Health: health can be calculated using an attack
+- Attack: This will decide the damage done to other players character
+- Defence: No need as of now but can be implemented in future
+- Movement: The board movement character is allowed to play
+
+## Warrior
+
+- Health: 100
+- Attack: 20
+- Defence: 15
+- Special Ability: "Battle Cry" (Increases nearby allies' attack by 10% for 1 turn)
+- Can defeat: All ground units in close combat 
+
+## Archer
+
+- Health: 70
+- Attack: 25
+- Defense: 10
+- Range: 3 hexes
+- Special Ability: "Precision Shot" (50% chance to deal double damage)
+- Can defeat: All ground units from a distance, weak against cavalry in close combat
+
+## Pikeman
+
+- Health: 85
+- Attack: 18
+- Defence: 20
+- Special Ability: "Brace for Impact" (Doubles damage against Archer charges)
+- Can defeat: Cavalry effectively, holds ground well against Warriors
+
+## Mage
+
+- Health: 60
+- Attack: 30
+- Defence: 8
+- Range: 2 hexes
+- Special Ability: "Elemental Burst" (Area of effect damage to all units in target hex and adjacent hexes)
+- Can defeat: Groups of units, especially effective against tightly packed formations
+
+## Scout
+
+- Health: 65
+- Attack: 15
+- Defense: 10
+- Special Ability: give ideas
+- Can defeat: Weaker units, mainly used for exploration and quick captures
+
+# Character Selection and Movement
+
+2. How each character will move in the game:
+    - Movement is based on the number of hexes a unit can traverse per turn.
+    - Terrain affects movement:
+        - Plains: Normal movement
+        - Forests: Reduces movement by 1 (minimum 1)
+        - Water: Only naval units can enter ( archers & Mage )
