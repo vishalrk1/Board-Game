@@ -3,13 +3,11 @@ import {
   AUTHENTICATE,
   ERROR,
   FINDING_GAME,
-  GameState,
   INIT_GAME,
-  JOIN_GAME,
 } from "../types";
-import { WebSocket } from "ws";
 import { SocketManager } from "./WebsocketManager";
 import { Game } from "./Game";
+import { v4 as uuidv4 } from "uuid";
 
 export class GameManager {
   private socketManager: SocketManager;
@@ -32,7 +30,7 @@ export class GameManager {
         case INIT_GAME: // joining queue
           this.ensureAuthenticate(socketId);
           this.joinQueue(socketId);
-          break
+          break;
       }
     } catch (e) {}
   }
@@ -64,7 +62,7 @@ export class GameManager {
       const player1Id = this.waitingPlayers.shift()!;
       const player2Id = this.waitingPlayers.shift()!;
 
-      const game = new Game("1", player1Id, player2Id);
+      const game = new Game(uuidv4(), player1Id, player2Id);
 
       await game.initialize();
       this.activeGames.push(game.id);

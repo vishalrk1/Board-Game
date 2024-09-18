@@ -1,3 +1,5 @@
+import { Character } from "./model/Character";
+
 // Enums and Types
 export enum CharacterType {
   WARRIOR,
@@ -10,21 +12,6 @@ export enum CharacterType {
 export type Position = {
   x: number;
   y: number;
-};
-
-export interface Character {
-  id: string;
-  type: string;
-  health: number;
-  attack: number;
-  defense: number;
-  movement: number;
-  range: number;
-  canCrossWater: boolean;
-}
-export type Player = {
-  id: string;
-  characters: Character[];
 };
 
 export enum TerrainType {

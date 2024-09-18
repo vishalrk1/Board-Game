@@ -1,4 +1,5 @@
-import { Cell, Character, MovementResult, TerrainType } from "../types";
+import { Cell, MovementResult, TerrainType } from "../types";
+import { Character } from "./Character";
 
 export class Board {
   private board: Cell[][];
@@ -163,7 +164,7 @@ export class Board {
           character: cell.character
             ? {
                 id: cell.character.id,
-                type: cell.character.type,
+                // type: cell.character.type,
                 health: cell.character.health,
               }
             : null,
