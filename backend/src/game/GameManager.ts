@@ -3,11 +3,13 @@ import {
   AUTHENTICATE,
   ERROR,
   FINDING_GAME,
+  GameState,
   INIT_GAME,
   JOIN_GAME,
 } from "../types";
 import { WebSocket } from "ws";
 import { SocketManager } from "./WebsocketManager";
+import { Game } from "./Game";
 
 export class GameManager {
   private socketManager: SocketManager;
@@ -28,8 +30,9 @@ export class GameManager {
           this.authenticateUser(socketId, data?.token);
           break;
         case INIT_GAME: // joining queue
-          this, this.ensureAuthenticate(socketId);
+          this.ensureAuthenticate(socketId);
           this.joinQueue(socketId);
+          break
       }
     } catch (e) {}
   }
@@ -51,21 +54,22 @@ export class GameManager {
         })
       );
     }
-    this.tryMatchPlayer(); // try to start a game with other player 
+    this.tryMatchPlayer(); // try to start a game with other player
   }
 
   // function to add 2 players in a game
   private async tryMatchPlayer() {
+    console.log("==> PLAYERS WAITING", this.waitingPlayers.length);
     while (this.waitingPlayers.length >= 2) {
       const player1Id = this.waitingPlayers.shift()!;
       const player2Id = this.waitingPlayers.shift()!;
 
-      // start the game here
-      const message = {
-        gameId: "1",
-        message: "Games Started!!",
-        type: JOIN_GAME,
-      };
+      const game = new Game("1", player1Id, player2Id);
+
+      await game.initialize();
+      this.activeGames.push(game.id);
+      const message = game.getGameState();
+
       // notify user game has been started
       this.socketManager.sendToUser(player1Id, JSON.stringify(message));
       this.socketManager.sendToUser(player2Id, JSON.stringify(message));
