@@ -1,3 +1,5 @@
+import { Character } from "./model/Character";
+
 // Enums and Types
 export enum CharacterType {
   WARRIOR,
@@ -7,30 +9,21 @@ export enum CharacterType {
   SCOUT,
 }
 
-export enum TerrainType {
-  PLAIN,
-  FOREST,
-  WATER,
-}
-
 export type Position = {
   x: number;
   y: number;
 };
 
-export type Character = {
-  type: CharacterType;
-  health: number;
-  attack: number;
-  movement: number;
-  position: Position;
-  specialAbilityActive: boolean;
-};
+export enum TerrainType {
+  PLAIN = "PLAIN",
+  FOREST = "FOREST",
+  WATER = "WATER",
+}
 
-export type Player = {
-  id: string;
-  characters: Character[];
-};
+export interface Cell {
+  terrain: TerrainType;
+  character: Character | null;
+}
 
 export type GameStatus =
   | "IN_PROGRESS"
@@ -56,3 +49,29 @@ export const GAME_UPDATE = "GAME_UPDATE";
 export const GAME_OVER = "GAME_OVER";
 
 export const ERROR = "ERROR";
+
+export interface MovementResult {
+  success: boolean;
+  message: string;
+}
+
+export interface AttackResult {
+  success: boolean;
+  message: string;
+  damage?: number;
+}
+
+export interface GameState {
+  id: string;
+  currentTurn: string;
+  map: any; // Replace 'any' with a proper Map serialization type
+  players: {
+    [playerId: string]: PlayerState;
+  };
+}
+
+export interface PlayerState {
+  characters: (Character & {
+    position: [number, number];
+  })[];
+}
