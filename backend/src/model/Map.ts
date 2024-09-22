@@ -30,23 +30,29 @@ export class Board {
   }
 
   private generateWater(): void {
-    const waterBodies = Math.floor(Math.random() * 3) + 1; // 1-3 water bodies
+    const waterBodies = Math.floor(Math.random() * 4) + 3; // 3-6 water bodies
     for (let i = 0; i < waterBodies; i++) {
-      const x = Math.floor(Math.random() * (this.size - 2)) + 1; // Avoid edges
-      const y = Math.floor(Math.random() * (this.size - 4)) + 2; // Avoid starting lines
+      const x = Math.floor(Math.random() * (this.size - 2)) + 1;
+      const y = Math.floor(Math.random() * (this.size - 4)) + 2;
 
       if (this.board[y] && this.board[y][x]) {
-        // Ensure the board cell exists
         this.board[y][x].terrain = TerrainType.WATER;
 
-        if (Math.random() > 0.5) {
-          // 50% chance for an adjacent pair
-          const direction = Math.random() > 0.5 ? 1 : -1;
-          const adjacentX = Math.min(Math.max(x + direction, 0), this.size - 1);
-
-          if (this.board[y][adjacentX]) {
-            // Check if adjacent cell exists
-            this.board[y][adjacentX].terrain = TerrainType.WATER;
+        // Increase chance for adjacent water cells
+        if (Math.random() > 0.3) {
+          // 70% chance for adjacent cells
+          const directions = [
+            [0, 1],
+            [0, -1],
+            [1, 0],
+            [-1, 0],
+          ];
+          for (const [dx, dy] of directions) {
+            const newX = Math.min(Math.max(x + dx, 0), this.size - 1);
+            const newY = Math.min(Math.max(y + dy, 0), this.size - 1);
+            if (this.board[newY] && this.board[newY][newX]) {
+              this.board[newY][newX].terrain = TerrainType.WATER;
+            }
           }
         }
       }
@@ -54,27 +60,23 @@ export class Board {
   }
 
   private generateForests(): void {
-    const forestClusters = Math.floor(Math.random() * 3) + 2; // 2-4 forest clusters
+    const forestClusters = Math.floor(Math.random() * 5) + 5; // 5-9 forest clusters
     for (let i = 0; i < forestClusters; i++) {
-      const centerX = Math.floor(Math.random() * 6) + 1; // Avoid edges
-      const centerY = Math.floor(Math.random() * 4) + 2; // Avoid starting lines
+      const centerX = Math.floor(Math.random() * (this.size - 2)) + 1;
+      const centerY = Math.floor(Math.random() * (this.size - 4)) + 2;
       this.createForestCluster(centerX, centerY);
     }
   }
 
   private createForestCluster(centerX: number, centerY: number): void {
-    const clusterSize = Math.floor(Math.random() * 3) + 2; // 2-4 cells per cluster
+    const clusterSize = Math.floor(Math.random() * 4) + 3; // 3-6 trees per cluster
     for (let i = 0; i < clusterSize; i++) {
-      const x = Math.min(
-        Math.max(centerX + Math.floor(Math.random() * 3) - 1, 0),
-        this.size - 1
-      );
-      const y = Math.min(
-        Math.max(centerY + Math.floor(Math.random() * 3) - 1, 0),
-        this.size - 1
-      );
-      if (y > 0 && y < this.size - 1) {
-        // Avoid starting lines
+      const offsetX = Math.floor(Math.random() * 3) - 1; // -1, 0, or 1
+      const offsetY = Math.floor(Math.random() * 3) - 1; // -1, 0, or 1
+      const x = Math.min(Math.max(centerX + offsetX, 0), this.size - 1);
+      const y = Math.min(Math.max(centerY + offsetY, 0), this.size - 1);
+
+      if (this.board[y] && this.board[y][x]) {
         this.board[y][x].terrain = TerrainType.FOREST;
       }
     }
@@ -155,11 +157,11 @@ export class Board {
   }
 
   public serialize(): object {
-    console.log(this.board);
     return {
       size: this.size,
-      board: this.board.map((row) =>
-        row.map((cell) => ({
+      board: this.board.map((row, y) =>
+        row.map((cell, x) => ({
+          position: { row: y, col: x },
           terrain: cell.terrain,
           character: cell.character
             ? {
