@@ -34,15 +34,15 @@ export class Game {
 
   // this function will place characters on map
   private placeCharactersOnMap(): void {
-    const placeforPlayer = (playerId: string, y: number) => {
+    const placeforPlayer = (playerId: string, x: number) => {
       const player = this.players.get(playerId);
       if (player) {
-        for (let i = 0; i < player?.characters.length; i++) {
-          this.map.placeCharacter(player.characters[i], i, y);
+        for (let i = 1; i < player?.characters.length; i++) {  
+          this.map.placeCharacter(player.characters[i], x, i);
         }
       }
     };
-    placeforPlayer(this.player1Id, 0); // start player 1 characeters on one sice of map
+    placeforPlayer(this.player1Id, 0); // start player 1 characeters on one side of map
     placeforPlayer(this.player2Id, 7); // start player 2 characeters on second sice of map
   }
 
