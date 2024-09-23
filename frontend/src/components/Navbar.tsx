@@ -1,9 +1,11 @@
 import useAuthStore from "@/hooks/useAuthStore";
 import { Button } from "./ui/button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const { isAuthenticated, clearToken } = useAuthStore();
+  const navigate = useNavigate();
+
   return (
     <nav className="fixed flex justify-center items-center mx-auto top-0 left-0 right-0 bg-transparent text-white p-2 shadow-md z-50">
       <div className="container w-10/12 p-2 flex justify-between gap-4 items-center bg-[#0a0c0c] drop-shadow-md rounded-full">
@@ -29,9 +31,19 @@ const Navbar = () => {
               <Button className="rounded-full px-6">Start Playing</Button>
             </Link>
           ) : (
-            <Button onClick={clearToken} className="rounded-full px-6">
-              Logout
-            </Button>
+            <>
+              <Button
+                onClick={() => {
+                  navigate("/game");
+                }}
+                className="rounded-full px-6"
+              >
+                Strart New Game
+              </Button>
+              <Button onClick={clearToken} className="rounded-full px-6">
+                Logout
+              </Button>
+            </>
           )}
         </div>
       </div>

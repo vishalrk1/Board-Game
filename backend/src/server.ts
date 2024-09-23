@@ -6,8 +6,8 @@ import { connectDatabase } from "./config/database";
 
 const PORT = process.env.PORT || 8080;
 
-// connectDatabase().then(() => {
-server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+connectDatabase().then(() => {
+  server.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
 });
-// });

@@ -37,7 +37,7 @@ export class Game {
     const placeforPlayer = (playerId: string, x: number) => {
       const player = this.players.get(playerId);
       if (player) {
-        for (let i = 1; i < player?.characters.length; i++) {  
+        for (let i = 1; i < player?.characters.length; i++) {
           this.map.placeCharacter(player.characters[i], x, i);
         }
       }
@@ -46,8 +46,9 @@ export class Game {
     placeforPlayer(this.player2Id, 7); // start player 2 characeters on second sice of map
   }
 
-  public getGameState(): GameState {
+  public getGameState(type?: string): GameState {
     return {
+      type: type,
       id: this.id,
       currentTurn: this.currentTurn,
       map: this.map.serialize(),
@@ -60,31 +61,30 @@ export class Game {
 
   private serializePlayerState(playerId: string): PlayerState {
     const player = this.players.get(playerId);
-  
+
     if (!player) {
       throw new Error(`Player with ID ${playerId} not found`);
     }
-  
+
     return {
       characters: player.getCharacters().map((c) => {
         const character = player.getCharacterById(c.id);
         const position = this.map.findCharacterPosition(c);
-  
+
         if (!character) {
           throw new Error(`Character with ID ${c.id} not found`);
         }
-  
+
         if (!position) {
           throw new Error(`Position for character ${c.id} not found`);
         }
-  
+
         // Return a Character object combined with position
         return {
-          ...character,         // All properties from Character
-          position: position,   // Adding position
+          ...character, // All properties from Character
+          position: position, // Adding position
         } as Character & { position: [number, number] };
       }),
     };
   }
-  
 }

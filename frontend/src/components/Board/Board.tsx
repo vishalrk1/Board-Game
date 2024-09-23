@@ -4,6 +4,8 @@ import { Cell, Character, Position, TerrainType } from "../../lib/Types";
 import PlainTile from "../../assets/plainTile.jpg";
 import ForestTile from "../../assets/grassTile.jpg";
 import WaterTile from "../../assets/waterTile.jpg";
+import useSocket from "@/hooks/useSocket";
+import useGameStore from "@/hooks/useGameStore";
 
 const terrainColors: Record<TerrainType, string> = {
   PLAIN: PlainTile,
@@ -27,6 +29,9 @@ const GameBoard: React.FC<GameBoardProps> = ({ board }) => {
   );
   // State to store the positions of cells that should be highlighted
   const [highlightedCells, setHighlightedCells] = useState<Position[]>([]);
+  const { findingGame, gameState } = useGameStore();
+
+  console.log("INITIAL BOARD STATE: ", gameState?.map.board);
 
   // Effect to update cell size based on window size
   useEffect(() => {
@@ -127,18 +132,22 @@ const GameBoard: React.FC<GameBoardProps> = ({ board }) => {
 
   return (
     <div className="w-full h-screen flex items-center justify-center">
-      <div
-        className="grid"
-        style={{
-          gridTemplateColumns: `repeat(${board.length}, ${cellSize}px)`,
-          width: `${cellSize * board.length}px`,
-          height: `${cellSize * board.length}px`,
-        }}
-      >
-        {board.map((row, rowIndex) =>
-          row.map((cell, colIndex) => renderCell(cell, rowIndex, colIndex))
-        )}
-      </div>
+      {!findingGame && gameState ? (
+        <div
+          className="grid"
+          style={{
+            gridTemplateColumns: `repeat(${board.length}, ${cellSize}px)`,
+            width: `${cellSize * board.length}px`,
+            height: `${cellSize * board.length}px`,
+          }}
+        >
+          {gameState?.map.board.map((row, rowIndex) =>
+            row.map((cell, colIndex) => renderCell(cell, rowIndex, colIndex))
+          )}
+        </div>
+      ) : (
+        <div>Loading...</div>
+      )}
     </div>
   );
 };

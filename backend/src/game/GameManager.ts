@@ -3,6 +3,7 @@ import {
   AUTHENTICATE,
   ERROR,
   FINDING_GAME,
+  GAME_STARTED,
   INIT_GAME,
 } from "../types";
 import { SocketManager } from "./WebsocketManager";
@@ -23,11 +24,13 @@ export class GameManager {
   async handleWebSocketMessage(socketId: string, message: string) {
     try {
       const data = JSON.parse(message);
+      console.log(data)
       switch (data?.type) {
         case AUTHENTICATE:
           this.authenticateUser(socketId, data?.token);
           break;
         case INIT_GAME: // joining queue
+          console.log("USER INIT CALL")
           this.ensureAuthenticate(socketId);
           this.joinQueue(socketId);
           break;
@@ -66,7 +69,7 @@ export class GameManager {
 
       await game.initialize();
       this.activeGames.push(game.id);
-      const message = game.getGameState();
+      const message = game.getGameState(GAME_STARTED);
 
       // notify user game has been started
       this.socketManager.sendToUser(player1Id, JSON.stringify(message));

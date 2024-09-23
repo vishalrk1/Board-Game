@@ -20,15 +20,18 @@ export interface Position {
   col: number;
 }
 
-// export interface GameState {
-//   map: {
-//     size: number;
-//     board: Cell[][];
-//   };
-//   players: Record<string, any>; // You may want to define a more specific type for players
-//   winner?: string;
-// }
-
+export interface GameState {
+  type?: string;
+  id: string;
+  currentTurn: string;
+  map: {
+    size: number;
+    board: Cell[][];
+  }; // Replace 'any' with a proper Map serialization type
+  players: {
+    [playerId: string]: any;
+  };
+}
 export interface ServerMessage {
   type: "GAME_STATE" | "VALID_MOVES" | "TURN_CHANGE" | "GAME_OVER" | "GAME_LOG";
   state?: []; //GameState;
@@ -43,6 +46,22 @@ export interface ClientMessage {
   to?: Position;
   position?: Position;
 }
+
+// WebSocket message types
+export const AUTHENTICATE = "AUTHENTICATE";
+export const AUTH_PENDING = "AUTH_PENDING";
+export const AUTH_FAILED = "AUTH_FAILED";
+export const AUTH_SUCCESS = "AUTH_SUCCESS";
+
+export const INIT_GAME = "INIT_GAME";
+export const FINDING_GAME = "FINDING_GAME";
+export const GAME_STARTED = "GAME_STARTED";
+
+export const MOVE = "MOVE";
+export const ATTACK = "ATTACK";
+export const ACTIVATE_ABILITY = "ACTIVATE_ABILITY";
+export const GAME_UPDATE = "GAME_UPDATE";
+export const GAME_OVER = "GAME_OVER";
 
 export const boardData: Cell[][] = [
   [

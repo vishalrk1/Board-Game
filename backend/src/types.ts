@@ -40,7 +40,7 @@ export const AUTH_SUCCESS = "AUTH_SUCCESS";
 
 export const INIT_GAME = "INIT_GAME";
 export const FINDING_GAME = "FINDING_GAME";
-export const JOIN_GAME = "JOIN_GAME";
+export const GAME_STARTED = "GAME_STARTED";
 
 export const MOVE = "MOVE";
 export const ATTACK = "ATTACK";
@@ -62,6 +62,7 @@ export interface AttackResult {
 }
 
 export interface GameState {
+  type?: string;
   id: string;
   currentTurn: string;
   map: any; // Replace 'any' with a proper Map serialization type

@@ -1,7 +1,21 @@
 import GameBoard from "@/components/Board/Board";
+import useGameSocket from "@/hooks/useGameSocket";
+import useGameStore from "@/hooks/useGameStore";
 import { boardData } from "@/lib/Types";
+import { useEffect } from "react";
 
 const GamePage = () => {
+  const { gameState, findingGame } = useGameStore();
+  const { startGame, isConnected } = useGameSocket();
+
+  useEffect(() => {
+    if (!gameState && !isConnected) {
+      startGame();
+    }
+  }, [gameState, startGame, isConnected]);
+
+  console.log("GAME LAYOUT", findingGame);
+
   return (
     <main className="flex items-center gap-2 p-4">
       <section className="flex flex-col items-center justify-between p-2 bg-gray-800 w-1/4 h-screen rounded-lg">
