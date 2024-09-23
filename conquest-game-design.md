@@ -6,7 +6,7 @@
    - Health: 100
    - Attack: 20
    - Defense: 15
-   - Movement: 2 hexes
+   - Movement: 2 blocks in any direction
    - Special Ability: "Battle Cry" (Increases nearby allies' attack by 10% for 1 turn)
    - Can defeat: All ground units in close combat
 
@@ -14,64 +14,53 @@
    - Health: 70
    - Attack: 25
    - Defense: 10
-   - Movement: 2 hexes
+   - Movement: 2 blocks in any direction
    - Range: 3 hexes
    - Special Ability: "Precision Shot" (50% chance to deal double damage)
    - Can defeat: All ground units from a distance, weak against cavalry in close combat
 
-3. Cavalry
-   - Health: 90
-   - Attack: 25
-   - Defense: 12
-   - Movement: 3 hexes
-   - Special Ability: "Charge" (First attack in a turn deals 50% extra damage)
-   - Can defeat: Archers and Warriors effectively, weak against Pikemen
-
-4. Pikeman
+3. Pikeman
    - Health: 85
    - Attack: 18
    - Defense: 20
-   - Movement: 1 hex
+   - Movement: 2/1 blocks diagonally
    - Special Ability: "Brace for Impact" (Doubles defense against Cavalry charges)
    - Can defeat: Cavalry effectively, holds ground well against Warriors
 
-5. Mage
+4. Mage
    - Health: 60
    - Attack: 30
    - Defense: 8
    - Movement: 2 hexes
-   - Range: 2 hexes
+   - Range: 2/1 block horizontally or vertically
    - Special Ability: "Elemental Burst" (Area of effect damage to all units in target hex and adjacent hexes)
    - Can defeat: Groups of units, especially effective against tightly packed formations
 
-6. Scout
+5. Scout
    - Health: 65
    - Attack: 15
    - Defense: 10
-   - Movement: 4 hexes
+   - Movement: max upto 4 blocks in any direction
    - Special Ability: "Recon" (Reveals fog of war in a 3-hex radius for 1 turn)
    - Can defeat: Weaker units, mainly used for exploration and quick captures
 
 ## Character Selection and Movement
 
 1. How many characters will each player be allowed to choose?
-   - At the start of the game, each player can choose a total of 10 units.
-   - The initial selection must include at least one of each unit type.
-   - As the game progresses, players can recruit more units based on their resources and controlled territories.
-   - There's a soft cap of 20 units per player to maintain game balance.
+   - 6 players will be assigned to each players ( randomly placed )
+   - At the start of the game, each player can choose a total of 10 units ( future plan).
+   - The initial selection must include at least one of each unit type ( future plan).
+   - As the game progresses, players can recruit more units based on their resources and controlled territories ( future plan).
+   - There's a soft cap of 20 units per player to maintain game balance ( future plan).
 
-2. How each character will move in the game:
-   - Movement is based on the number of hexes a unit can traverse per turn.
-   - Terrain affects movement:
-     - Plains: Normal movement
-     - Forests: Reduces movement by 1 (minimum 1)
-     - Mountains: Reduces movement by 2 (minimum 1)
-     - Water: Only naval units can enter
-   - Units cannot move through enemy units unless using a special ability.
-   - Some special abilities may allow for additional movement or unique movement patterns.
+2.Board Layout
+   - The game is played on an 8x8 square grid. We'll divide the board into different terrain types:
+      - Plains (50% of squares): Normal movement for all units.
+      - Forests (25% of squares): Reduces movement by 1 (minimum 1). Provides cover, reducing damage taken by 25%.
+      - Water (25% of squares): Only Archers and Mages can enter. Other units must go around.
 
 ## Resource Usage in Gameplay
-
+**THIS IS FOR FUTURE REFERANCES**
 3. How different resources will be used while playing the game:
 
    Gold:
@@ -107,6 +96,3 @@
    - Players must balance resource usage between unit recruitment, maintenance, and development.
    - Efficient resource management is key to sustaining a large army and expanding territory.
    - Trading excess resources or raiding enemy territories can be viable strategies for resource acquisition.
-
-This design provides a diverse set of characters with unique strengths and weaknesses, a flexible character selection system, and a deep resource management aspect that adds strategic depth to the gameplay.
-
