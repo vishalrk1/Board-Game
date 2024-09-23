@@ -19,9 +19,7 @@ interface GameBoardProps {
   onCellClick?: (row: number, col: number) => void;
 }
 
-const GameBoard: React.FC<GameBoardProps> = ({
-  board,
-}) => {
+const GameBoard: React.FC<GameBoardProps> = ({ board }) => {
   const [cellSize, setCellSize] = useState(40);
   // State to keep track of the currently selected character
   const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(
@@ -98,7 +96,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
           className={`
            flex items-center justify-center 
             cursor-pointer
-            ${isHighlightedCell ? "border-2 border-yellow-400" : ""} 
+            ${isHighlightedCell ? "border-2 border-yellow-400 rounded-md" : ""} 
             border border-gray-950
             relative
           `}
@@ -118,7 +116,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
                 handleCharacterClick(cell.character, cell);
               }}
             >
-              {cell.character.id}: {cell.character.health}
+              {cell.character.health}
             </div>
           )}
         </div>
@@ -128,7 +126,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
   );
 
   return (
-    <div className="h-full flex items-center justify-center">
+    <div className="w-full h-screen flex items-center justify-center">
       <div
         className="grid"
         style={{
