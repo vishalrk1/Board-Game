@@ -13,8 +13,6 @@ const GamePage = () => {
     }
   }, [gameState, startGame, isConnected]);
 
-  console.log("GAME LAYOUT", findingGame);
-
   return (
     <main className="flex items-center gap-2 p-4">
       <section className="flex flex-col items-center justify-between p-2 bg-gray-800 w-1/4 h-screen rounded-lg">

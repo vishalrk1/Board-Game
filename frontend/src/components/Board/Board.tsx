@@ -145,7 +145,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ board }) => {
             height: `${cellSize * board.length}px`,
           }}
         >
-          {board.map((row, y) => row.map((cell, x) => renderCell(cell, x, y)))}
+          {board.map((row, y) => row.map((cell, x) => renderCell(cell, y, x)))}
         </div>
       ) : (
         <div>Loading...</div>

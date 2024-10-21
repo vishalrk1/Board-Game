@@ -83,9 +83,9 @@ export class Board {
   }
 
   public placeCharacter(character: Character, x: number, y: number) {
-    // if the cordinates are valid and character is not present character will be placed on (x,y)
-    if (!this.board[x][y].character && this.isValidPosition(x, y)) {
-      this.board[x][y].character = character;
+    // Correct indexing: row first, then column
+    if (!this.board[y][x].character && this.isValidPosition(x, y)) {
+      this.board[y][x].character = character;
     }
   }
 
@@ -95,15 +95,19 @@ export class Board {
     character: Character
   ): MovementResult {
     const [oldX, oldY] = this.findCharacterPosition(character);
-    console.log('Old x,y: ', oldX, oldY)
-    if (oldX === -1 || !this.isValidMove(character, oldX, oldY, newX, newY)) {
-      console.log("Not valid move")
+    console.log("Old x,y: ", oldX, oldY); // Debugging the old position
+    if (
+      oldX === -1 ||
+      oldY === -1 ||
+      !this.isValidMove(character, oldX, oldY, newX, newY)
+    ) {
+      console.log("Not a valid move");
       return { success: false, message: "Invalid Move!" };
     }
-    this.board[oldX][oldY].character = null;
-    this.board[newX][newY].character = character;
+    this.board[oldY][oldX].character = null; // Fix indexing here
+    this.board[newY][newX].character = character;
 
-    return { success: true, message: "Move Sucessfull" };
+    return { success: true, message: "Move Successful" };
   }
 
   private isValidMove(

@@ -48,6 +48,7 @@ const useGameSocket = () => {
           setFindingGame(false);
           break;
         case GAME_UPDATE:
+          console.log("Game state updated: ", message)
           setGameState(message as GameState);
           break;
         case INVALID_MOVE:
