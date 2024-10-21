@@ -1,7 +1,6 @@
 import GameBoard from "@/components/Board/Board";
 import useGameSocket from "@/hooks/useGameSocket";
 import useGameStore from "@/hooks/useGameStore";
-import { boardData } from "@/lib/Types";
 import { useEffect } from "react";
 
 const GamePage = () => {
@@ -30,7 +29,9 @@ const GamePage = () => {
         </div>
       </section>
       <section className="flex w-full justify-start items-center flex-1">
-        <GameBoard board={boardData} isMyTurn={true} />
+        {gameState?.map && (
+          <GameBoard board={gameState.map.board} isMyTurn={true} />
+        )}
       </section>
     </main>
   );

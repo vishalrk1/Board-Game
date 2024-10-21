@@ -7,6 +7,7 @@ interface GameStoreStartProps {
   isLoading: boolean;
   error: string | null;
   socket: WebSocket | null;
+  ismyTurn: boolean;
   setGameState: (gameState: GameState) => void;
   setFindingGame: (findingGame: boolean) => void;
   setIsLoading: (isLoading: boolean) => void;
@@ -21,6 +22,7 @@ const useGameStore = create<GameStoreStartProps>((set) => ({
   isLoading: false,
   error: null,
   socket: null,
+  ismyTurn: false,
   setGameState: (gameState) => set({ gameState }),
   setFindingGame: (findingGame) => set({ findingGame }),
   setIsLoading: (isLoading) => set({ isLoading }),
@@ -29,6 +31,9 @@ const useGameStore = create<GameStoreStartProps>((set) => ({
   startGame: () => {
     set({ findingGame: true, isLoading: true, gameState: null });
   },
+  // setIsMyTurn: () => {
+  //   set({ ismyTurn: get().gameState?.currentTurn === get().socket?. });
+  // },
 }));
 
 export default useGameStore;

@@ -1,6 +1,6 @@
 import { Player } from "../model/Player";
 import { Board } from "../model/Map";
-import { GameState, PlayerState } from "../types";
+import { CharacterMoveData, GameState, PlayerState } from "../types";
 import { Character } from "../model/Character";
 
 export class Game {
@@ -44,6 +44,26 @@ export class Game {
     };
     placeforPlayer(this.player1Id, 0); // start player 1 characeters on one side of map
     placeforPlayer(this.player2Id, 7); // start player 2 characeters on second sice of map
+  }
+
+  private switchTurn() {
+    this.currentTurn =
+      this.currentTurn === this.player1Id ? this.player2Id : this.player1Id;
+  }
+
+  public async handelMove(data: CharacterMoveData): Promise<boolean> {
+    const isSucess = this.map.moveCharacter(
+      data.newX,
+      data.newY,
+      this.players.get(this.currentTurn)?.getCharacterById(data.characterId)!
+    );
+
+    if (isSucess.success) {
+      this.switchTurn();
+      return true;
+    }
+
+    return false;
   }
 
   public getGameState(type?: string): GameState {

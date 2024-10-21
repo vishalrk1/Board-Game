@@ -95,7 +95,9 @@ export class Board {
     character: Character
   ): MovementResult {
     const [oldX, oldY] = this.findCharacterPosition(character);
+    console.log('Old x,y: ', oldX, oldY)
     if (oldX === -1 || !this.isValidMove(character, oldX, oldY, newX, newY)) {
+      console.log("Not valid move")
       return { success: false, message: "Invalid Move!" };
     }
     this.board[oldX][oldY].character = null;

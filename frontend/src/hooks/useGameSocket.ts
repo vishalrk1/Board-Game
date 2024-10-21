@@ -4,8 +4,11 @@ import {
   AUTHENTICATE,
   FINDING_GAME,
   GAME_STARTED,
+  GAME_UPDATE,
   GameState,
   INIT_GAME,
+  INVALID_MOVE,
+  MOVE,
 } from "@/lib/Types";
 import useGameStore from "./useGameStore";
 import useAuthStore from "./useAuthStore";
@@ -43,6 +46,15 @@ const useGameSocket = () => {
           console.log("Game started:", message);
           setGameState(message as GameState);
           setFindingGame(false);
+          break;
+        case GAME_UPDATE:
+          setGameState(message as GameState);
+          break;
+        case INVALID_MOVE:
+          console.error("Invalid move:", message.message);
+          break;
+        default:
+          console.log("Unknown message type:", message.type);
           break;
       }
     },
@@ -100,8 +112,27 @@ const useGameSocket = () => {
     }
   }, [connect, token]);
 
+  const makeCharacterMove = useCallback(
+    (characterId: string, newX: number, newY: number) => {
+      if (socketRef.current?.readyState === WebSocket.OPEN) {
+        socketRef.current.send(
+          JSON.stringify({
+            type: MOVE,
+            movement: {
+              characterId: characterId,
+              newX: newX,
+              newY: newY,
+            },
+          })
+        );
+      }
+    },
+    []
+  );
+
   return {
     startGame,
+    makeCharacterMove,
     isConnected: socketRef.current?.readyState === WebSocket.OPEN,
   };
 };

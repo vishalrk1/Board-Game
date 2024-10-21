@@ -42,12 +42,13 @@ export const INIT_GAME = "INIT_GAME";
 export const FINDING_GAME = "FINDING_GAME";
 export const GAME_STARTED = "GAME_STARTED";
 
-export const MOVE = "MOVE";
 export const ATTACK = "ATTACK";
 export const ACTIVATE_ABILITY = "ACTIVATE_ABILITY";
 export const GAME_UPDATE = "GAME_UPDATE";
 export const GAME_OVER = "GAME_OVER";
 
+export const MOVE = "MOVE";
+export const INVALID_MOVE = "INVALID_MOVE";
 export const ERROR = "ERROR";
 
 export interface MovementResult {
@@ -75,4 +76,10 @@ export interface PlayerState {
   characters: (Character & {
     position: [number, number];
   })[];
+}
+
+export interface CharacterMoveData {
+  characterId: string;
+  newX: number;
+  newY: number;
 }
