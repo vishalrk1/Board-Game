@@ -76,6 +76,7 @@ export interface MoveResult {
 export interface MapCharacterMoveResult {
   success: boolean;
   message: string;
+  combat?: CombatResult
 }
 
 export interface PlayerState {
@@ -85,8 +86,16 @@ export interface PlayerState {
 }
 
 export interface CharacterMoveData {
+  type?: string;
   characterId: string;
   newX: number;
   newY: number;
   playerId?: string;
+}
+
+export interface CombatResult {
+  winner: Character;
+  loser: Character;
+  damage: number;
+  specialEffect?: string;
 }

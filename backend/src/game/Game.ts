@@ -63,7 +63,7 @@ export class Game {
     if (this.currentTurn !== data.playerId) {
       return {
         success: false,
-        message: "This is not your character",
+        message: "This is not your Turn",
         gameState: this.getGameState(INVALID_MOVE),
       };
     }
@@ -71,6 +71,7 @@ export class Game {
     const character = this.players
       .get(this.currentTurn)
       ?.getCharacterById(data.characterId);
+
     if (!character) {
       return {
         success: false,
@@ -78,7 +79,7 @@ export class Game {
         gameState: this.getGameState(INVALID_MOVE),
       };
     }
-
+    
     const moveResult: MapCharacterMoveResult = this.map.moveCharacter(
       data.newX,
       data.newY,

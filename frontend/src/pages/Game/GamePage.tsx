@@ -4,14 +4,15 @@ import useGameStore from "@/hooks/useGameStore";
 import { useEffect } from "react";
 
 const GamePage = () => {
-  const { gameState, findingGame } = useGameStore();
+  const { gameState } = useGameStore();
   const { startGame, isConnected } = useGameSocket();
 
   useEffect(() => {
-    if (!gameState && !isConnected) {
+    // Only start game when connected and no game state exists
+    if (isConnected && !gameState) {
       startGame();
     }
-  }, [gameState, startGame, isConnected]);
+  }, [isConnected, gameState, startGame]);
 
   return (
     <main className="flex items-center gap-2 p-4">
@@ -22,7 +23,9 @@ const GamePage = () => {
           </div>
           <div className="flex flex-col items-start justify-center">
             <h1 className="text-lg font-light">player1@gmail.com</h1>
-            <p className="text-sm text-gray-600">Connected</p>
+            <p className="text-sm text-gray-600">
+              {isConnected ? "Connected" : "Connecting..."}
+            </p>
           </div>
         </div>
       </section>

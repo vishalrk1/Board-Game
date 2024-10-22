@@ -12,7 +12,10 @@ import {
 } from "@/lib/Types";
 import useGameStore from "./useGameStore";
 import useAuthStore from "./useAuthStore";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+
+const RECONNECT_DELAY = 5000;
+const MAX_RECONNECT_ATTEMPTS = 3;
 
 const useGameSocket = () => {
   const { setGameState, setSocket, setIsLoading, setFindingGame, setError } =
@@ -20,6 +23,11 @@ const useGameSocket = () => {
   const { token } = useAuthStore();
 
   const socketRef = useRef<WebSocket | null>(null);
+  const reconnectAttemptsRef = useRef(0);
+  const [isConnected, setIsConnected] = useState(false);
+
+  // Keep track of connection status to prevent duplicate connections
+  const isConnectingRef = useRef(false);
 
   const handleMessage = useCallback(
     (event: MessageEvent) => {
@@ -29,12 +37,8 @@ const useGameSocket = () => {
       switch (message.type) {
         case AUTH_SUCCESS:
           setIsLoading(false);
-          if (socketRef.current) {
-            socketRef.current.send(
-              JSON.stringify({ type: INIT_GAME, token: token })
-            );
-          }
-          setFindingGame(true);
+          setIsConnected(true);
+          reconnectAttemptsRef.current = 0; // Reset reconnect attempts on successful auth
           break;
         case AUTH_PENDING:
           setIsLoading(true);
@@ -43,12 +47,10 @@ const useGameSocket = () => {
           setFindingGame(true);
           break;
         case GAME_STARTED:
-          console.log("Game started:", message);
           setGameState(message as GameState);
           setFindingGame(false);
           break;
         case GAME_UPDATE:
-          console.log("Game state updated: ", message)
           setGameState(message as GameState);
           break;
         case INVALID_MOVE:
@@ -59,21 +61,42 @@ const useGameSocket = () => {
           break;
       }
     },
-    [setGameState, setFindingGame, setIsLoading, setError, token]
+    [setGameState, setFindingGame, setIsLoading, setError]
   );
 
   const connect = useCallback(() => {
-    if (socketRef.current?.readyState === WebSocket.OPEN) {
-      return; // Already connected
+    // Prevent multiple simultaneous connection attempts
+    if (
+      isConnectingRef.current ||
+      socketRef.current?.readyState === WebSocket.CONNECTING
+    ) {
+      console.log("Connection attempt already in progress");
+      return;
     }
 
+    // Check if we've exceeded max reconnection attempts
+    if (reconnectAttemptsRef.current >= MAX_RECONNECT_ATTEMPTS) {
+      setError(
+        "Maximum reconnection attempts reached. Please refresh the page."
+      );
+      return;
+    }
+
+    // Don't try to reconnect if we already have an open connection
+    if (socketRef.current?.readyState === WebSocket.OPEN) {
+      console.log("WebSocket connection already open");
+      return;
+    }
+
+    isConnectingRef.current = true;
     const ws = new WebSocket("ws://localhost:8080");
     socketRef.current = ws;
 
     ws.onopen = () => {
-      console.log("Connection completed with websocket");
+      console.log("WebSocket connection established");
       setSocket(ws);
       setIsLoading(false);
+      isConnectingRef.current = false;
       ws.send(JSON.stringify({ type: AUTHENTICATE, token: token }));
     };
 
@@ -82,22 +105,33 @@ const useGameSocket = () => {
     ws.onerror = (error) => {
       console.error("WebSocket error:", error);
       setError("WebSocket connection error");
-      socketRef.current = null;
+      isConnectingRef.current = false;
+      setIsConnected(false);
     };
 
     ws.onclose = () => {
       console.log("WebSocket connection closed");
       setSocket(null);
-      socketRef.current = null;
-      // Attempt to reconnect after a delay
-      setTimeout(connect, 5000);
+      setIsConnected(false);
+      isConnectingRef.current = false;
+
+      // Increment reconnection attempts
+      reconnectAttemptsRef.current += 1;
+
+      if (reconnectAttemptsRef.current < MAX_RECONNECT_ATTEMPTS) {
+        setTimeout(connect, RECONNECT_DELAY);
+      } else {
+        setError("Connection lost. Maximum reconnection attempts reached.");
+      }
     };
   }, [setSocket, setIsLoading, setError, token, handleMessage]);
 
+  // Only establish connection once when component mounts
   useEffect(() => {
     connect();
 
     return () => {
+      isConnectingRef.current = false;
       if (socketRef.current) {
         socketRef.current.close();
       }
@@ -105,36 +139,41 @@ const useGameSocket = () => {
   }, [connect]);
 
   const startGame = useCallback(() => {
+    if (!isConnected) {
+      console.log("Not connected. Cannot start game.");
+      return;
+    }
+
     if (socketRef.current?.readyState === WebSocket.OPEN) {
       socketRef.current.send(JSON.stringify({ type: INIT_GAME, token: token }));
-    } else {
-      console.log("Not authenticated yet. Trying to reconnect...");
-      connect();
     }
-  }, [connect, token]);
+  }, [token, isConnected]);
 
   const makeCharacterMove = useCallback(
     (characterId: string, newX: number, newY: number) => {
+      if (!isConnected) {
+        console.log("Not connected. Cannot make move.");
+        return;
+      }
+
       if (socketRef.current?.readyState === WebSocket.OPEN) {
         socketRef.current.send(
           JSON.stringify({
             type: MOVE,
-            movement: {
-              characterId: characterId,
-              newX: newX,
-              newY: newY,
-            },
+            characterId,
+            newX,
+            newY,
           })
         );
       }
     },
-    []
+    [isConnected]
   );
 
   return {
     startGame,
     makeCharacterMove,
-    isConnected: socketRef.current?.readyState === WebSocket.OPEN,
+    isConnected,
   };
 };
 

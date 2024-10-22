@@ -122,6 +122,8 @@ export class GameManager {
       };
 
       const moveResult: MoveResult = await game?.handelMove(movementData);
+      console.log("Movement Team: ", moveResult);
+
       game.getPlayerIds().forEach((playerId) => {
         this.socketManager.sendToUser(
           playerId,
