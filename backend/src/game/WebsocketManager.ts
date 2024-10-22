@@ -44,7 +44,6 @@ export class SocketManager {
   }
 
   async authenticateSocket(socketID: string, token: string): Promise<IUser> {
-    console.log("Authenticating user");
     const socket = this.connections.get(socketID);
     if (!socket) {
       throw new Error("Player Not found!!");

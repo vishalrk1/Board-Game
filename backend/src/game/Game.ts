@@ -1,6 +1,14 @@
 import { Player } from "../model/Player";
 import { Board } from "../model/Map";
-import { CharacterMoveData, GameState, PlayerState } from "../types";
+import {
+  CharacterMoveData,
+  GAME_UPDATE,
+  GameState,
+  INVALID_MOVE,
+  MapCharacterMoveResult,
+  MoveResult,
+  PlayerState,
+} from "../types";
 import { Character } from "../model/Character";
 
 export class Game {
@@ -51,19 +59,45 @@ export class Game {
       this.currentTurn === this.player1Id ? this.player2Id : this.player1Id;
   }
 
-  public async handelMove(data: CharacterMoveData): Promise<boolean> {
-    const isSucess = this.map.moveCharacter(
-      data.newX,
-      data.newY,
-      this.players.get(this.currentTurn)?.getCharacterById(data.characterId)!
-    );
-
-    if (isSucess.success) {
-      this.switchTurn();
-      return true;
+  public async handelMove(data: CharacterMoveData): Promise<MoveResult> {
+    if (this.currentTurn !== data.playerId) {
+      return {
+        success: false,
+        message: "This is not your character",
+        gameState: this.getGameState(INVALID_MOVE),
+      };
     }
 
-    return false;
+    const character = this.players
+      .get(this.currentTurn)
+      ?.getCharacterById(data.characterId);
+    if (!character) {
+      return {
+        success: false,
+        message: "Character not Found",
+        gameState: this.getGameState(INVALID_MOVE),
+      };
+    }
+
+    const moveResult: MapCharacterMoveResult = this.map.moveCharacter(
+      data.newX,
+      data.newY,
+      character
+    );
+    if (!moveResult.success) {
+      return {
+        success: false,
+        message: "Invalid move",
+        gameState: this.getGameState(INVALID_MOVE),
+      };
+    }
+
+    this.switchTurn();
+    return {
+      success: true,
+      message: "Character moved successfully",
+      gameState: this.getGameState(GAME_UPDATE),
+    };
   }
 
   public getGameState(type?: string): GameState {
@@ -106,5 +140,13 @@ export class Game {
         } as Character & { position: [number, number] };
       }),
     };
+  }
+
+  public isPlayerTurn(playerId: string): boolean {
+    return this.currentTurn === playerId;
+  }
+
+  public getPlayerIds(): string[] {
+    return [this.player1Id, this.player2Id];
   }
 }

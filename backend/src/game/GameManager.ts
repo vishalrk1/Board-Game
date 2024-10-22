@@ -9,6 +9,7 @@ import {
   INIT_GAME,
   INVALID_MOVE,
   MOVE,
+  MoveResult,
 } from "../types";
 import { SocketManager } from "./WebsocketManager";
 import { Game } from "./Game";
@@ -35,33 +36,11 @@ export class GameManager {
           this.authenticateUser(socketId, data?.token);
           break;
         case INIT_GAME: // joining queue
-          console.log("USER INIT CALL");
           this.ensureAuthenticate(socketId);
           this.joinQueue(socketId);
           break;
         case MOVE:
-          this.ensureAuthenticate(socketId);
-          const currentGame = this.getGameForSocket(socketId);
-          if (!currentGame) {
-            throw new Error("Game Not Found");
-          }
-          const moveSucess = await currentGame.handelMove(
-            data?.movement as CharacterMoveData
-          );
-          console.log(
-            moveSucess ? "Move Sucessfull" : "Game Over",
-            data.movement as CharacterMoveData
-          );
-
-          this.socketManager.sendToUser(
-            socketId,
-            moveSucess
-              ? JSON.stringify(currentGame.getGameState(GAME_UPDATE))
-              : JSON.stringify({
-                  type: INVALID_MOVE,
-                  message: "Invalid move or move failed try again",
-                })
-          );
+          this.handelMovetype(socketId, data as CharacterMoveData);
           break;
         default:
           console.log("Unknown message type:", data?.type);
@@ -122,6 +101,39 @@ export class GameManager {
 
     const gameId = this.playerGameMap.get(userId);
     return gameId ? this.activeGames.get(gameId) : undefined;
+  }
+
+  private async handelMovetype(socketId: string, data: CharacterMoveData) {
+    this.ensureAuthenticate(socketId);
+    try {
+      const game = this.getGameForSocket(socketId);
+      if (!game) {
+        throw new Error("Game not found");
+      }
+
+      const userId = this.socketManager.getSocket(socketId)?.userId;
+      if (!userId) {
+        throw new Error("User not authenticated");
+      }
+
+      const movementData: CharacterMoveData = {
+        ...data,
+        playerId: userId,
+      };
+
+      const moveResult: MoveResult = await game?.handelMove(movementData);
+      game.getPlayerIds().forEach((playerId) => {
+        this.socketManager.sendToUser(
+          playerId,
+          JSON.stringify({
+            ...moveResult.gameState,
+            message: moveResult.message,
+          })
+        );
+      });
+    } catch (error) {
+      this.handleError(socketId, (error as Error).message);
+    }
   }
 
   private async authenticateUser(socketId: string, token: string) {

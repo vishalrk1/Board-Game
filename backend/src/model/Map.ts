@@ -1,4 +1,9 @@
-import { Cell, MovementResult, TerrainType } from "../types";
+import {
+  Cell,
+  MapCharacterMoveResult,
+  MoveResult,
+  TerrainType,
+} from "../types";
 import { Character } from "./Character";
 
 export class Board {
@@ -93,7 +98,7 @@ export class Board {
     newX: number,
     newY: number,
     character: Character
-  ): MovementResult {
+  ): MapCharacterMoveResult {
     const [oldX, oldY] = this.findCharacterPosition(character);
     console.log("Old x,y: ", oldX, oldY); // Debugging the old position
     if (
@@ -101,7 +106,6 @@ export class Board {
       oldY === -1 ||
       !this.isValidMove(character, oldX, oldY, newX, newY)
     ) {
-      console.log("Not a valid move");
       return { success: false, message: "Invalid Move!" };
     }
     this.board[oldY][oldX].character = null; // Fix indexing here

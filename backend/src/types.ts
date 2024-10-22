@@ -51,11 +51,6 @@ export const MOVE = "MOVE";
 export const INVALID_MOVE = "INVALID_MOVE";
 export const ERROR = "ERROR";
 
-export interface MovementResult {
-  success: boolean;
-  message: string;
-}
-
 export interface AttackResult {
   success: boolean;
   message: string;
@@ -72,6 +67,17 @@ export interface GameState {
   };
 }
 
+export interface MoveResult {
+  success: boolean;
+  message: string;
+  gameState: GameState;
+}
+
+export interface MapCharacterMoveResult {
+  success: boolean;
+  message: string;
+}
+
 export interface PlayerState {
   characters: (Character & {
     position: [number, number];
@@ -82,4 +88,5 @@ export interface CharacterMoveData {
   characterId: string;
   newX: number;
   newY: number;
+  playerId?: string;
 }
